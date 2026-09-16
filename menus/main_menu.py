@@ -1,7 +1,11 @@
+
 from services.auth_service import AuthService
+from menus.user_menu import user_menu
+from menus.admin_menu import admin_menu
 
 
 def register_menu():
+
     print("\n========== REGISTER ==========")
 
     username = input("Username: ")
@@ -22,6 +26,7 @@ def register_menu():
 
 
 def login_menu():
+
     print("\n========== LOGIN ==========")
 
     username = input("Username: ")
@@ -36,17 +41,20 @@ def login_menu():
     print(f"\nWelcome {user.name}!")
 
     if user.role == "admin":
-        print("You are logged in as Admin.")
+        admin_menu(user)
+
     else:
-        print("You are logged in as User.")
+        user_menu(user)
 
 
 def main_menu():
+
     while True:
 
         print("\n================================")
         print("          ONLINE SHOP")
         print("================================")
+
         print("1. Register")
         print("2. Login")
         print("3. Exit")
