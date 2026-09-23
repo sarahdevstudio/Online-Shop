@@ -1,0 +1,4 @@
+1|Laptop|Electronics|50000000|10
+2|Mouse|Accessories|500000|25
+3|Keyboard|Accessories|1200000|15
+4|Headphone|Accessories|2500000|8
