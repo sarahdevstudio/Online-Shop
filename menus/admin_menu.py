@@ -1,3 +1,5 @@
+from services.product_service import ProductService
+
 
 def admin_menu(user):
 
@@ -20,7 +22,7 @@ def admin_menu(user):
         choice = input("Choose an option: ")
 
         if choice == "1":
-            print("Add Product - Coming Soon")
+            add_product_menu()
 
         elif choice == "2":
             print("Edit Product - Coming Soon")
@@ -29,7 +31,7 @@ def admin_menu(user):
             print("Delete Product - Coming Soon")
 
         elif choice == "4":
-            print("View Products - Coming Soon")
+            ProductService.display_products()
 
         elif choice == "5":
             print("Search Product - Coming Soon")
@@ -49,3 +51,36 @@ def admin_menu(user):
 
         else:
             print("Invalid option.")
+
+
+def add_product_menu():
+
+    print("\n========== ADD PRODUCT ==========")
+
+    name = input("Product name: ")
+    category = input("Category: ")
+
+    try:
+        price = float(input("Price: "))
+        stock = int(input("Stock: "))
+    except ValueError:
+        print("Price or stock is invalid.")
+        return
+
+    if price < 0:
+        print("Price cannot be negative.")
+        return
+
+    if stock < 0:
+        print("Stock cannot be negative.")
+        return
+
+    product = ProductService.add_product(
+        name,
+        category,
+        price,
+        stock
+    )
+
+    print("\nProduct added successfully!")
+    print(f"Product ID: {product.id}")
