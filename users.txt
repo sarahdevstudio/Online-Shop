@@ -1,0 +1,2 @@
+1|admin|admin123|Admin|09120000000|Canada|admin
+2|ali|1234|Ali|09121111111|Canada|user
