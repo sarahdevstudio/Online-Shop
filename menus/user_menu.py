@@ -24,7 +24,7 @@ def user_menu(user):
             ProductService.display_products()
 
         elif choice == "2":
-            print("Search Product - Coming Soon")
+            search_product_menu()
 
         elif choice == "3":
             print("View Categories - Coming Soon")
@@ -47,3 +47,14 @@ def user_menu(user):
 
         else:
             print("Invalid option.")
+
+
+def search_product_menu():
+
+    print("\n========== SEARCH PRODUCT ==========")
+
+    search_text = input("Search: ")
+
+    results = ProductService.search_product(search_text)
+
+    ProductService.display_products(results)
