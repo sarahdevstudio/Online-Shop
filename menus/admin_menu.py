@@ -25,16 +25,16 @@ def admin_menu(user):
             add_product_menu()
 
         elif choice == "2":
-            print("Edit Product - Coming Soon")
+            edit_product_menu()
 
         elif choice == "3":
-            print("Delete Product - Coming Soon")
+            delete_product_menu()
 
         elif choice == "4":
             ProductService.display_products()
 
         elif choice == "5":
-            print("Search Product - Coming Soon")
+            search_product_menu()
 
         elif choice == "6":
             print("View Users - Coming Soon")
@@ -64,15 +64,11 @@ def add_product_menu():
         price = float(input("Price: "))
         stock = int(input("Stock: "))
     except ValueError:
-        print("Price or stock is invalid.")
+        print("Invalid price or stock.")
         return
 
-    if price < 0:
-        print("Price cannot be negative.")
-        return
-
-    if stock < 0:
-        print("Stock cannot be negative.")
+    if price < 0 or stock < 0:
+        print("Price and stock cannot be negative.")
         return
 
     product = ProductService.add_product(
@@ -84,3 +80,99 @@ def add_product_menu():
 
     print("\nProduct added successfully!")
     print(f"Product ID: {product.id}")
+
+
+def edit_product_menu():
+
+    print("\n========== EDIT PRODUCT ==========")
+
+    try:
+        product_id = int(input("Product ID: "))
+    except ValueError:
+        print("Invalid Product ID.")
+        return
+
+    product = ProductService.get_product_by_id(product_id)
+
+    if product is None:
+        print("Product not found.")
+        return
+
+    print("\nCurrent information:")
+
+    print(f"Name: {product.name}")
+    print(f"Category: {product.category}")
+    print(f"Price: {product.price}")
+    print(f"Stock: {product.stock}")
+
+    print("\nEnter new information:")
+
+    name = input("New name: ")
+    category = input("New category: ")
+
+    try:
+        price = float(input("New price: "))
+        stock = int(input("New stock: "))
+    except ValueError:
+        print("Invalid price or stock.")
+        return
+
+    if price < 0 or stock < 0:
+        print("Price and stock cannot be negative.")
+        return
+
+    success = ProductService.update_product(
+        product_id,
+        name,
+        category,
+        price,
+        stock
+    )
+
+    if success:
+        print("Product updated successfully.")
+    else:
+        print("Product update failed.")
+
+
+def delete_product_menu():
+
+    print("\n========== DELETE PRODUCT ==========")
+
+    try:
+        product_id = int(input("Product ID: "))
+    except ValueError:
+        print("Invalid Product ID.")
+        return
+
+    product = ProductService.get_product_by_id(product_id)
+
+    if product is None:
+        print("Product not found.")
+        return
+
+    print(f"Product: {product.name}")
+
+    confirm = input("Are you sure? (y/n): ")
+
+    if confirm.lower() != "y":
+        print("Delete cancelled.")
+        return
+
+    success = ProductService.delete_product(product_id)
+
+    if success:
+        print("Product deleted successfully.")
+    else:
+        print("Product deletion failed.")
+
+
+def search_product_menu():
+
+    print("\n========== SEARCH PRODUCT ==========")
+
+    search_text = input("Search: ")
+
+    results = ProductService.search_product(search_text)
+
+    ProductService.display_products(results)
