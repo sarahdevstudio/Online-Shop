@@ -1,3 +1,5 @@
+from services.product_service import ProductService
+
 
 def user_menu(user):
 
@@ -19,7 +21,7 @@ def user_menu(user):
         choice = input("Choose an option: ")
 
         if choice == "1":
-            print("View Products - Coming Soon")
+            ProductService.display_products()
 
         elif choice == "2":
             print("Search Product - Coming Soon")
