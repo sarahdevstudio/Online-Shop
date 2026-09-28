@@ -1,5 +1,5 @@
 from services.product_service import ProductService
-
+from services.category_service import CategoryService
 
 def user_menu(user):
 
@@ -27,7 +27,7 @@ def user_menu(user):
             search_product_menu()
 
         elif choice == "3":
-            print("View Categories - Coming Soon")
+            CategoryService.display_categories()
 
         elif choice == "4":
             print("Add Product to Cart - Coming Soon")
