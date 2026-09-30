@@ -112,6 +112,36 @@ class ProductService:
         return True
 
     @staticmethod
+    def reduce_stock_for_cart(carts):
+        products = ProductService.get_products()
+
+        for cart in carts:
+
+            for product in products:
+
+                if product.id == cart.product_id:
+                    product.stock -= cart.quantity
+                    break
+
+        data = []
+
+        for product in products:
+            line = (
+                f"{product.id}|"
+                f"{product.name}|"
+                f"{product.category}|"
+                f"{product.price}|"
+                f"{product.stock}\n"
+            )
+
+            data.append(line)
+
+        FileManager.update_file(
+            ProductService.PRODUCTS_FILE,
+            data
+        )
+
+    @staticmethod
     def delete_product(product_id):
         products = ProductService.get_products()
 
