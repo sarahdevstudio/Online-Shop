@@ -1,7 +1,7 @@
 from services.product_service import ProductService
 from services.category_service import CategoryService
 from services.cart_service import CartService
-
+from services.order_service import OrderService
 
 def user_menu(user):
 
@@ -49,11 +49,11 @@ def user_menu(user):
 
         elif choice == "7":
 
-            print("Checkout - Coming Soon")
+            checkout_menu(user)
 
         elif choice == "8":
 
-            print("Order History - Coming Soon")
+            OrderService.display_user_orders(user.id)
 
         elif choice == "9":
 
@@ -137,3 +137,45 @@ def remove_from_cart_menu(user):
     else:
 
         print("Product not found in cart.")
+
+def checkout_menu(user):
+
+    print("\n========== CHECKOUT ==========")
+
+    CartService.display_cart(user.id)
+
+    carts = CartService.get_user_cart(user.id)
+
+    if not carts:
+
+        return
+
+    total = CartService.calculate_total(
+        user.id
+    )
+
+    print(f"\nFinal Total: {total}")
+
+    confirm = input(
+        "Do you want to place the order? (y/n): "
+    )
+
+    if confirm.lower() != "y":
+
+        print("Checkout cancelled.")
+        return
+
+    success, result = OrderService.checkout(
+        user.id
+    )
+
+    if not success:
+
+        print(result)
+        return
+
+    print("\nOrder placed successfully!")
+
+    print(f"Order ID: {result.order_id}")
+    print(f"Total Price: {result.total_price}")
+    print(f"Status: {result.status}")
