@@ -57,6 +57,22 @@ class CartService:
 
         return user_cart
 
+    
+    @staticmethod
+    def clear_cart(user_id):
+
+       carts = CartService.get_carts()
+
+       new_carts = []
+
+       for cart in carts:
+
+           if cart.user_id != user_id:
+
+               new_carts.append(cart)
+
+       CartService.save_carts(new_carts)
+    
     @staticmethod
     def add_to_cart(user_id, product_id, quantity):
 
