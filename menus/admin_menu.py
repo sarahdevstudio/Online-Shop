@@ -1,5 +1,6 @@
 from services.product_service import ProductService
 from services.category_service import CategoryService
+from services.order_service import OrderService
 
 def admin_menu(user):
 
@@ -16,9 +17,7 @@ def admin_menu(user):
         print("5. Search Product")
         print("6. View Users")
         print("7. View Orders")
-        print("8. Change Order Status")
-        print("9. Category Management")
-        print("10. Logout")
+        print("8. Logout")
 
         choice = input("Choose an option: ")
 
@@ -39,17 +38,11 @@ def admin_menu(user):
 
         elif choice == "6":
             print("View Users - Coming Soon")
-
-        elif choice == "7":
-            print("View Orders - Coming Soon")
-
-        elif choice == "8":
-            print("Change Order Status - Coming Soon")
         
-        elif choice == "9":
+        elif choice == "7":
             category_management_menu()
 
-        elif choice == "10":
+        elif choice == "8":
             print("Logged out successfully.")
             break
 
@@ -300,3 +293,124 @@ def delete_category_menu():
     else:
 
         print("Category deletion failed.")
+
+def order_management_menu():
+
+    while True:
+
+        print("\n================================")
+        print("        ORDER MANAGEMENT")
+        print("================================")
+
+        print("1. View All Orders")
+        print("2. View Order Details")
+        print("3. Change Order Status")
+        print("4. Back")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+
+            OrderService.display_all_orders()
+
+        elif choice == "2":
+
+            view_order_details_menu()
+
+        elif choice == "3":
+
+            change_order_status_menu()
+
+        elif choice == "4":
+
+            break
+
+        else:
+
+            print("Invalid option.")
+
+def view_order_details_menu():
+
+    print("\n========== ORDER DETAILS ==========")
+
+    try:
+
+        order_id = int(
+            input("Order ID: ")
+        )
+
+    except ValueError:
+
+        print("Invalid Order ID.")
+        return
+
+    OrderService.display_order(order_id)
+
+def change_order_status_menu():
+
+    print("\n========== CHANGE ORDER STATUS ==========")
+
+    try:
+
+        order_id = int(
+            input("Order ID: ")
+        )
+
+    except ValueError:
+
+        print("Invalid Order ID.")
+        return
+
+    order = OrderService.get_order_by_id(
+        order_id
+    )
+
+    if order is None:
+
+        print("Order not found.")
+        return
+
+    print(f"\nCurrent Status: {order.status}")
+
+    print("\nAvailable Statuses:")
+
+    print("1. Pending")
+    print("2. Processing")
+    print("3. Shipped")
+    print("4. Completed")
+    print("5. Cancelled")
+
+    choice = input(
+        "\nChoose new status: "
+    )
+
+    statuses = {
+        "1": "Pending",
+        "2": "Processing",
+        "3": "Shipped",
+        "4": "Completed",
+        "5": "Cancelled"
+    }
+
+    if choice not in statuses:
+
+        print("Invalid status.")
+        return
+
+    new_status = statuses[choice]
+
+    success = OrderService.update_order_status(
+        order_id,
+        new_status
+    )
+
+    if success:
+
+        print(
+            f"\nOrder status changed to "
+            f"{new_status}."
+        )
+
+    else:
+
+        print("Failed to update order status.")
