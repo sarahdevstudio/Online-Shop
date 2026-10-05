@@ -1,6 +1,7 @@
 from services.product_service import ProductService
 from services.category_service import CategoryService
 from services.order_service import OrderService
+from services.auth_service import AuthService
 
 def admin_menu(user):
 
@@ -37,7 +38,7 @@ def admin_menu(user):
             search_product_menu()
 
         elif choice == "6":
-            print("View Users - Coming Soon")
+            user_management_menu()
         
         elif choice == "7":
             category_management_menu()
@@ -414,3 +415,43 @@ def change_order_status_menu():
     else:
 
         print("Failed to update order status.")
+
+def user_management_menu():
+
+    while True:
+
+        print("\n================================")
+        print("         USER MANAGEMENT")
+        print("================================")
+
+        print("1. View All Users")
+        print("2. Search User")
+        print("3. View User Details")
+        print("4. Edit User")
+        print("5. Back")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+
+            AuthService.display_users()
+
+        elif choice == "2":
+
+            search_user_menu()
+
+        elif choice == "3":
+
+            view_user_details_menu()
+
+        elif choice == "4":
+
+            edit_user_menu()
+
+        elif choice == "5":
+
+            break
+
+        else:
+
+            print("Invalid option.")
