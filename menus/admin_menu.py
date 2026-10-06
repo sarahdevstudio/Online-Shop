@@ -455,3 +455,141 @@ def user_management_menu():
         else:
 
             print("Invalid option.")
+
+def search_user_menu():
+
+    print("\n========== SEARCH USER ==========")
+
+    search_text = input(
+        "Search username, name or phone: "
+    )
+
+    results = AuthService.search_users(
+        search_text
+    )
+
+    AuthService.display_users(results)
+
+def view_user_details_menu():
+
+    print("\n========== USER DETAILS ==========")
+
+    try:
+
+        user_id = int(
+            input("User ID: ")
+        )
+
+    except ValueError:
+
+        print("Invalid User ID.")
+        return
+
+    user = AuthService.get_user_by_id(
+        user_id
+    )
+
+    if user is None:
+
+        print("User not found.")
+        return
+
+    print("\n========== USER INFORMATION ==========")
+
+    print(f"ID       : {user.id}")
+    print(f"Username : {user.username}")
+    print(f"Name     : {user.name}")
+    print(f"Phone    : {user.phone}")
+    print(f"Address  : {user.address}")
+    print(f"Role     : {user.role}")
+
+def edit_user_menu():
+
+    print("\n========== EDIT USER ==========")
+
+    try:
+
+        user_id = int(
+            input("User ID: ")
+        )
+
+    except ValueError:
+
+        print("Invalid User ID.")
+        return
+
+    user = AuthService.get_user_by_id(
+        user_id
+    )
+
+    if user is None:
+
+        print("User not found.")
+        return
+
+    print("\nCurrent information:")
+
+    print(f"Username : {user.username}")
+    print(f"Name     : {user.name}")
+    print(f"Phone    : {user.phone}")
+    print(f"Address  : {user.address}")
+    print(f"Role     : {user.role}")
+
+    print("\nEnter new information:")
+
+    username = input(
+        "New username: "
+    )
+
+    name = input(
+        "New name: "
+    )
+
+    phone = input(
+        "New phone: "
+    )
+
+    address = input(
+        "New address: "
+    )
+
+    print("\nRoles:")
+    print("1. user")
+    print("2. admin")
+
+    role_choice = input(
+        "Choose role: "
+    )
+
+    if role_choice == "1":
+
+        role = "user"
+
+    elif role_choice == "2":
+
+        role = "admin"
+
+    else:
+
+        print("Invalid role.")
+        return
+
+    success = AuthService.update_user(
+        user_id,
+        username,
+        name,
+        phone,
+        address,
+        role
+    )
+
+    if success:
+
+        print("\nUser updated successfully.")
+
+    else:
+
+        print(
+            "\nFailed to update user."
+        )
+
