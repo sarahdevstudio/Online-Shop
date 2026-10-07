@@ -2,17 +2,31 @@
 from services.auth_service import AuthService
 from menus.user_menu import user_menu
 from menus.admin_menu import admin_menu
-
+from utils.helpers import InputHelper
 
 def register_menu():
 
     print("\n========== REGISTER ==========")
 
-    username = input("Username: ")
-    password = input("Password: ")
-    name = input("Name: ")
-    phone = input("Phone: ")
-    address = input("Address: ")
+    username = InputHelper.get_username(
+        "Username: "
+    )
+
+    password = InputHelper.get_password(
+        "Password: "
+    )
+
+    name = InputHelper.get_required_input(
+        "Name: "
+    )
+
+    phone = InputHelper.get_phone(
+        "Phone: "
+    )
+
+    address = InputHelper.get_required_input(
+        "Address: "
+    )
 
     success, message = AuthService.register(
         username,
