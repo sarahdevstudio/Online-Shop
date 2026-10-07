@@ -2,6 +2,7 @@ from services.product_service import ProductService
 from services.category_service import CategoryService
 from services.cart_service import CartService
 from services.order_service import OrderService
+from utils.helpers import InputHelper
 
 def user_menu(user):
 
@@ -84,20 +85,13 @@ def add_to_cart_menu(user):
 
     ProductService.display_products()
 
-    try:
+    product_id = InputHelper.get_positive_integer(
+        "\nProduct ID: "
+    )
 
-        product_id = int(
-            input("\nProduct ID: ")
-        )
-
-        quantity = int(
-            input("Quantity: ")
-        )
-
-    except ValueError:
-
-        print("Invalid Product ID or quantity.")
-        return
+    quantity = InputHelper.get_positive_integer(
+        "Quantity: "
+    )
 
     success, message = CartService.add_to_cart(
         user.id,
