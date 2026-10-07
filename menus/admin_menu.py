@@ -2,6 +2,7 @@ from services.product_service import ProductService
 from services.category_service import CategoryService
 from services.order_service import OrderService
 from services.auth_service import AuthService
+from utils.helpers import InputHelper
 
 def admin_menu(user):
 
@@ -50,27 +51,21 @@ def admin_menu(user):
         else:
             print("Invalid option.")
 
-
 def add_product_menu():
 
     print("\n========== ADD PRODUCT ==========")
 
-    name = input("Product name: ")
+    name = InputHelper.get_required_input(
+        "Product name: "
+    )
 
     print("\nAvailable Categories:")
 
     CategoryService.display_categories()
 
-    try:
-
-        category_id = int(
-            input("\nCategory ID: ")
-        )
-
-    except ValueError:
-
-        print("Invalid Category ID.")
-        return
+    category_id = InputHelper.get_positive_integer(
+        "Category ID: "
+    )
 
     category = CategoryService.get_category_by_id(
         category_id
@@ -81,28 +76,13 @@ def add_product_menu():
         print("Category not found.")
         return
 
-    try:
+    price = InputHelper.get_non_negative_float(
+        "Price: "
+    )
 
-        price = float(
-            input("Price: ")
-        )
-
-        stock = int(
-            input("Stock: ")
-        )
-
-    except ValueError:
-
-        print("Invalid price or stock.")
-        return
-
-    if price < 0 or stock < 0:
-
-        print(
-            "Price and stock cannot be negative."
-        )
-
-        return
+    stock = InputHelper.get_non_negative_integer(
+        "Stock: "
+    )
 
     product = ProductService.add_product(
         name,
@@ -114,7 +94,7 @@ def add_product_menu():
     print("\nProduct added successfully!")
 
     print(f"Product ID: {product.id}")
-    print(f"Category: {product.category}")
+
 
 def edit_product_menu():
 
