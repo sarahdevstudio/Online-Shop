@@ -165,38 +165,45 @@ def edit_product_menu():
 
         print("Product update failed.")
 
-
 def delete_product_menu():
 
     print("\n========== DELETE PRODUCT ==========")
 
-    try:
-        product_id = int(input("Product ID: "))
-    except ValueError:
-        print("Invalid Product ID.")
-        return
+    product_id = InputHelper.get_positive_integer(
+        "Product ID: "
+    )
 
-    product = ProductService.get_product_by_id(product_id)
+    product = ProductService.get_product_by_id(
+        product_id
+    )
 
     if product is None:
+
         print("Product not found.")
         return
 
     print(f"Product: {product.name}")
 
-    confirm = input("Are you sure? (y/n): ")
+    confirm = input(
+        "Are you sure? (y/n): "
+    ).lower()
 
-    if confirm.lower() != "y":
+    if confirm != "y":
+
         print("Delete cancelled.")
         return
 
-    success = ProductService.delete_product(product_id)
+    success = ProductService.delete_product(
+        product_id
+    )
 
     if success:
-        print("Product deleted successfully.")
-    else:
-        print("Product deletion failed.")
 
+        print("Product deleted successfully.")
+
+    else:
+
+        print("Product deletion failed.")
 
 def search_product_menu():
 
