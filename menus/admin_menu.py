@@ -100,15 +100,16 @@ def edit_product_menu():
 
     print("\n========== EDIT PRODUCT ==========")
 
-    try:
-        product_id = int(input("Product ID: "))
-    except ValueError:
-        print("Invalid Product ID.")
-        return
+    product_id = InputHelper.get_positive_integer(
+        "Product ID: "
+    )
 
-    product = ProductService.get_product_by_id(product_id)
+    product = ProductService.get_product_by_id(
+        product_id
+    )
 
     if product is None:
+
         print("Product not found.")
         return
 
@@ -121,31 +122,47 @@ def edit_product_menu():
 
     print("\nEnter new information:")
 
-    name = input("New name: ")
-    category = input("New category: ")
+    name = InputHelper.get_required_input(
+        "New name: "
+    )
 
-    try:
-        price = float(input("New price: "))
-        stock = int(input("New stock: "))
-    except ValueError:
-        print("Invalid price or stock.")
+    CategoryService.display_categories()
+
+    category_id = InputHelper.get_positive_integer(
+        "New category ID: "
+    )
+
+    category = CategoryService.get_category_by_id(
+        category_id
+    )
+
+    if category is None:
+
+        print("Category not found.")
         return
 
-    if price < 0 or stock < 0:
-        print("Price and stock cannot be negative.")
-        return
+    price = InputHelper.get_non_negative_float(
+        "New price: "
+    )
+
+    stock = InputHelper.get_non_negative_integer(
+        "New stock: "
+    )
 
     success = ProductService.update_product(
         product_id,
         name,
-        category,
+        category.name,
         price,
         stock
     )
 
     if success:
+
         print("Product updated successfully.")
+
     else:
+
         print("Product update failed.")
 
 
