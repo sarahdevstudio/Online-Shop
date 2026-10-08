@@ -1,5 +1,6 @@
 from models.user import User
 from utils.file_manager import FileManager
+from utils.password_helper import PasswordHelper
 
 
 class AuthService:
@@ -96,10 +97,12 @@ class AuthService:
                 for user in users
             ) + 1
 
+        hashed_password = PasswordHelper.hash_password(password)
+
         new_user = User(
             new_id,
             username,
-            password,
+            hashed_password,
             name,
             phone,
             address,
@@ -125,19 +128,23 @@ class AuthService:
 
     @staticmethod
     def login(username, password):
-
+        
         users = AuthService.get_users()
-
+        
         for user in users:
-
-            if (
-                user.username == username
-                and user.password == password
+            if user.username.lower() != username.lower():
+                continue
+                
+            if PasswordHelper.verify_password(
+                password,
+                user.password
             ):
-
                 return user
-
+                
+            return None
+                    
         return None
+
 
     @staticmethod
     def search_users(search_text):
@@ -184,7 +191,7 @@ class AuthService:
         if target_user is None:
             return False
 
-        # بررسی تکراری نبودن username
+        # check username is not duplicate
         for user in users:
 
             if (
@@ -248,3 +255,62 @@ Address  : {user.address}
 Role     : {user.role}
 --------------------------------------------
 """)
+
+
+   @staticmethod
+   def create_admin(
+       username,
+       password,
+       name,
+       phone,
+       address
+   ):
+
+    users = AuthService.get_users()
+
+    for user in users:
+
+        if user.username.lower() == username.lower():
+
+            return False, "Username already exists."
+
+    new_id = 1
+
+    if users:
+
+        new_id = max(
+            user.id
+            for user in users
+        ) + 1
+
+    hashed_password = PasswordHelper.hash_password(
+        password
+    )
+
+    admin = User(
+        new_id,
+        username,
+        hashed_password,
+        name,
+        phone,
+        address,
+        "admin"
+    )
+
+    line = (
+        f"{admin.id}|"
+        f"{admin.username}|"
+        f"{admin.password}|"
+        f"{admin.name}|"
+        f"{admin.phone}|"
+        f"{admin.address}|"
+        f"{admin.role}\n"
+    )
+
+    FileManager.append_to_file(
+        AuthService.USERS_FILE,
+        line
+    )
+
+    return True, "Admin created successfully."
+            
