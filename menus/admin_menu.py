@@ -3,6 +3,8 @@ from services.category_service import CategoryService
 from services.order_service import OrderService
 from services.auth_service import AuthService
 from utils.helpers import InputHelper
+from services.discount_service import DiscountService
+
 
 def admin_menu(user):
 
@@ -17,9 +19,10 @@ def admin_menu(user):
         print("3. Delete Product")
         print("4. View Products")
         print("5. Search Product")
-        print("6. View Users")
-        print("7. View Orders")
-        print("8. Logout")
+        print("6. Users Management")
+        print("7. Order Management")
+        print("8. Discount Management")
+        print("9. Logout")
 
         choice = input("Choose an option: ")
 
@@ -42,14 +45,50 @@ def admin_menu(user):
             user_management_menu()
         
         elif choice == "7":
-            category_management_menu()
+            order_management_menu()
 
         elif choice == "8":
+            discount_management_menu()
+
+        elif choice == "9":
             print("Logged out successfully.")
             break
 
         else:
             print("Invalid option.")
+
+def discount_management_menu():
+
+    while True:
+
+        print("""
+================ DISCOUNT MANAGEMENT ================
+
+1. Add Discount
+2. View Discounts
+3. Delete Discount
+4. Back
+
+======================================================
+""")
+
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            add_discount_menu()
+
+        elif choice == "2":
+            DiscountService.display_discounts()
+
+        elif choice == "3":
+            delete_discount_menu()
+
+        elif choice == "4":
+            break
+
+        else:
+            print("Invalid option.")
+            
 
 def add_product_menu():
 
@@ -595,5 +634,74 @@ def edit_user_menu():
 
         print(
             "\nFailed to update user."
+        )
+
+
+def add_discount_menu():
+
+    print("\n========== ADD DISCOUNT ==========")
+
+    code = InputHelper.get_required_input(
+        "Discount Code: "
+    )
+
+    percent = InputHelper.get_positive_float(
+        "Discount Percent: "
+    )
+
+    if percent > 100:
+
+        print(
+            "Discount percent cannot be greater than 100."
+        )
+
+        return
+
+    max_uses = InputHelper.get_positive_integer(
+        "Maximum Uses: "
+    )
+
+    success = DiscountService.add_discount(
+        code,
+        percent,
+        max_uses
+    )
+
+    if success:
+
+        print(
+            "\nDiscount created successfully."
+        )
+
+    else:
+
+        print(
+            "\nThis discount code already exists."
+        )
+
+def delete_discount_menu():
+
+    print("\n========== DELETE DISCOUNT ==========")
+
+    DiscountService.display_discounts()
+
+    discount_id = InputHelper.get_positive_integer(
+        "Enter Discount ID: "
+    )
+
+    success = DiscountService.delete_discount(
+        discount_id
+    )
+
+    if success:
+
+        print(
+            "\nDiscount deleted successfully."
+        )
+
+    else:
+
+        print(
+            "\nDiscount not found."
         )
 
