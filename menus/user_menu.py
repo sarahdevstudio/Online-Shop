@@ -3,6 +3,7 @@ from services.category_service import CategoryService
 from services.cart_service import CartService
 from services.order_service import OrderService
 from utils.helpers import InputHelper
+from services.discount_service import DiscountService
 
 def user_menu(user):
 
@@ -134,42 +135,118 @@ def remove_from_cart_menu(user):
 
 def checkout_menu(user):
 
-    print("\n========== CHECKOUT ==========")
+    print("\n================ CHECKOUT ================")
 
     CartService.display_cart(user.id)
 
     carts = CartService.get_user_cart(user.id)
 
     if not carts:
-
         return
 
-    total = CartService.calculate_total(
+    subtotal = CartService.calculate_total(
         user.id
     )
 
-    print(f"\nFinal Total: {total}")
-
-    confirm = input(
-        "Do you want to place the order? (y/n): "
+    print(
+        f"\nSubtotal: {subtotal}"
     )
 
-    if confirm.lower() != "y":
+    discount_code = ""
 
-        print("Checkout cancelled.")
+    use_discount = input(
+        "\nDo you have a discount code? (y/n): "
+    ).strip().lower()
+
+    if use_discount == "y":
+
+        discount_code = input(
+            "Enter discount code: "
+        ).strip()
+
+        success, result = (
+            DiscountService.validate_discount(
+                discount_code
+            )
+        )
+
+        if not success:
+
+            print(
+                f"\n{result}"
+            )
+
+            return
+
+        discount = result
+
+        discount_amount = (
+            subtotal * discount.percent / 100
+        )
+
+        final_total = (
+            subtotal - discount_amount
+        )
+
+        print(
+            f"\nDiscount: "
+            f"{discount.percent}%"
+        )
+
+        print(
+            f"Discount Amount: "
+            f"{discount_amount}"
+        )
+
+        print(
+            f"Final Price: "
+            f"{final_total}"
+        )
+
+    else:
+
+        final_total = subtotal
+
+        print(
+            f"\nFinal Price: "
+            f"{final_total}"
+        )
+
+    confirm = input(
+        "\nDo you want to place the order? (y/n): "
+    ).strip().lower()
+
+    if confirm != "y":
+
+        print(
+            "\nCheckout cancelled."
+        )
+
         return
 
     success, result = OrderService.checkout(
-        user.id
+        user.id,
+        discount_code
     )
 
-    if not success:
+    if success:
 
-        print(result)
-        return
+        print(
+            "\nOrder placed successfully!"
+        )
 
-    print("\nOrder placed successfully!")
+        print(
+            f"Order ID: "
+            f"{result.order_id}"
+        )
 
-    print(f"Order ID: {result.order_id}")
-    print(f"Total Price: {result.total_price}")
-    print(f"Status: {result.status}")
+        print(
+            f"Final Price: "
+            f"{result.total_price}"
+        )
+
+    else:
+
+        print(
+            f"\nCheckout failed: {result}"
+        )
