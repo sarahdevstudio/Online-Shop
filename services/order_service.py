@@ -190,46 +190,64 @@ class OrderService:
     #clear checkout
     CartService.clear_cart(user_id)
 
-    return True, order 
+    return True, order
+ 
     @staticmethod
     def update_order_status(order_id, new_status):
 
-        orders = OrderService.get_orders()
+    allowed_transitions = {
+        "Pending": ["Processing", "Cancelled"],
+        "Processing": ["Shipped", "Cancelled"],
+        "Shipped": ["Completed"],
+        "Completed": [],
+        "Cancelled": []
+    }
 
-        found = False
+    orders = OrderService.get_orders()
 
-        for order in orders:
+    order = None
 
-            if order.order_id == order_id:
+    for item in orders:
+        if item.order_id == order_id:
+            order = item
+            break
 
-                order.status = new_status
-                found = True
-                break
+    if order is None:
+        return False, "Order not found."
 
-        if not found:
-            return False
+    if new_status not in allowed_transitions:
+        return False, "Invalid order status."
 
-        data = []
-
-        for order in orders:
-
-            line = (
-                f"{order.order_id}|"
-                f"{order.user_id}|"
-                f"{order.products}|"
-                f"{order.total_price}|"
-                f"{order.status}\n"
-            )
-
-            data.append(line)
-
-        FileManager.update_file(
-            OrderService.ORDERS_FILE,
-            data
+    if new_status not in allowed_transitions[order.status]:
+        return False, (
+            f"Cannot change status from "
+            f"{order.status} to {new_status}."
         )
 
-        return True
+    order.status = new_status
 
+    data = []
+
+    for item in orders:
+
+        line = (
+            f"{item.order_id}|"
+            f"{item.user_id}|"
+            f"{item.products}|"
+            f"{item.total_price}|"
+            f"{item.status}|"
+            f"{item.discount_code}|"
+            f"{item.discount_amount}\n"
+        )
+
+        data.append(line)
+
+    FileManager.update_file(
+        OrderService.ORDERS_FILE,
+        data
+    )
+
+    return True, "Order status updated successfully."
     @staticmethod
     def display_all_orders():
 
