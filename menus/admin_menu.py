@@ -390,74 +390,59 @@ def view_order_details_menu():
 
     OrderService.display_order(order_id)
 
+
 def change_order_status_menu():
 
     print("\n========== CHANGE ORDER STATUS ==========")
 
-    try:
+    OrderService.display_all_orders()
 
-        order_id = int(
-            input("Order ID: ")
-        )
-
-    except ValueError:
-
-        print("Invalid Order ID.")
-        return
+    order_id = InputHelper.get_positive_integer(
+        "Enter Order ID: "
+    )
 
     order = OrderService.get_order_by_id(
         order_id
     )
 
     if order is None:
-
         print("Order not found.")
         return
 
     print(f"\nCurrent Status: {order.status}")
 
-    print("\nAvailable Statuses:")
+    print("""
+Available statuses:
 
-    print("1. Pending")
-    print("2. Processing")
-    print("3. Shipped")
-    print("4. Completed")
-    print("5. Cancelled")
+1. Processing
+2. Shipped
+3. Completed
+4. Cancelled
+""")
 
-    choice = input(
-        "\nChoose new status: "
-    )
-
-    statuses = {
-        "1": "Pending",
-        "2": "Processing",
-        "3": "Shipped",
-        "4": "Completed",
-        "5": "Cancelled"
+    status_options = {
+        "1": "Processing",
+        "2": "Shipped",
+        "3": "Completed",
+        "4": "Cancelled"
     }
 
-    if choice not in statuses:
+    choice = input(
+        "Select new status: "
+    ).strip()
 
-        print("Invalid status.")
+    if choice not in status_options:
+        print("Invalid option.")
         return
 
-    new_status = statuses[choice]
+    new_status = status_options[choice]
 
-    success = OrderService.update_order_status(
+    success, message = OrderService.update_order_status(
         order_id,
         new_status
     )
 
-    if success:
-
-        print(
-            f"\nOrder status changed to "
-            f"{new_status}."
-        )
-
-    else:
-
-        print("Failed to update order status.")
+    print(message)
 
 def user_management_menu():
 
