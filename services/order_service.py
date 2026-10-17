@@ -3,7 +3,7 @@ from utils.file_manager import FileManager
 from services.cart_service import CartService
 from services.product_service import ProductService
 from services.discount_service import DiscountService
-
+from services.inventory_service import InventoryService
 
 class OrderService:
 
@@ -175,9 +175,18 @@ class OrderService:
         line
     )
 
-    # کاهش موجودی محصولات
+    # reduce stock
     ProductService.reduce_stock_for_cart(
         carts
+    )
+
+    for cart in carts:
+
+    InventoryService.add_record(
+        product_id=cart.product_id,
+        change=-cart.quantity,
+        operation="SALE",
+        note=f"Order #{new_order_id}"
     )
 
     # add more usage from discount
