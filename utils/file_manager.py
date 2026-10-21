@@ -3,8 +3,25 @@ import os
 
 class FileManager:
 
+    BASE_DIR = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))
+    )
+
+    @staticmethod
+    def resolve(file_path):
+
+        if os.path.isabs(file_path):
+            return file_path
+
+        return os.path.join(
+            FileManager.BASE_DIR,
+            file_path
+        )
+
     @staticmethod
     def read_file(file_path):
+
+        file_path = FileManager.resolve(file_path)
 
         if not os.path.exists(file_path):
 
@@ -20,6 +37,8 @@ class FileManager:
 
     @staticmethod
     def write_file(file_path, data):
+
+        file_path = FileManager.resolve(file_path)
 
         directory = os.path.dirname(file_path)
 
@@ -40,6 +59,8 @@ class FileManager:
 
     @staticmethod
     def append_to_file(file_path, data):
+
+        file_path = FileManager.resolve(file_path)
 
         directory = os.path.dirname(file_path)
 
@@ -68,6 +89,8 @@ class FileManager:
 
     @staticmethod
     def delete_file(file_path):
+
+        file_path = FileManager.resolve(file_path)
 
         if os.path.exists(file_path):
 
