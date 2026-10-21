@@ -10,11 +10,17 @@ class InputHelper:
 
             value = input(message).strip()
 
-            if not Validator.is_empty(value):
+            if Validator.is_empty(value):
+
+                print("This field cannot be empty.")
+
+            elif Validator.has_separator(value):
+
+                print("The character '|' is not allowed.")
+
+            else:
 
                 return value
-
-            print("This field cannot be empty.")
 
     @staticmethod
     def get_positive_integer(message):
@@ -104,7 +110,7 @@ class InputHelper:
 
             print(
                 "Username must be at least "
-                "3 characters and contain no spaces."
+                "3 characters and contain no spaces or '|'."
             )
 
     @staticmethod
