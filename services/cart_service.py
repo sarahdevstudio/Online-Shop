@@ -152,6 +152,17 @@ class CartService:
         return True
 
     @staticmethod
+    def remove_product_from_all_carts(product_id):
+
+        carts = [
+            cart
+            for cart in CartService.get_carts()
+            if cart.product_id != product_id
+        ]
+
+        CartService.save_carts(carts)
+
+    @staticmethod
     def save_carts(carts):
 
         data = []
