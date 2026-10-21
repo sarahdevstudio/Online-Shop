@@ -4,6 +4,7 @@ from services.order_service import OrderService
 from services.auth_service import AuthService
 from utils.helpers import InputHelper
 from services.discount_service import DiscountService
+from services.report_service import ReportService
 
 
 def admin_menu(user):
@@ -22,7 +23,9 @@ def admin_menu(user):
         print("6. Users Management")
         print("7. Order Management")
         print("8. Discount Management")
-        print("9. Logout")
+        print("9. Category Management")
+        print("10. Sales Report")
+        print("11. Logout")
 
         choice = input("Choose an option: ")
 
@@ -51,6 +54,12 @@ def admin_menu(user):
             discount_management_menu()
 
         elif choice == "9":
+            category_management_menu()
+
+        elif choice == "10":
+            ReportService.display_report()
+
+        elif choice == "11":
             print("Logged out successfully.")
             break
 
@@ -288,6 +297,26 @@ def category_management_menu():
         else:
 
             print("Invalid option.")
+
+def add_category_menu():
+
+    print("\n========== ADD CATEGORY ==========")
+
+    name = InputHelper.get_required_input(
+        "Category name: "
+    )
+
+    success, category = CategoryService.add_category(name)
+
+    if success:
+
+        print("Category added successfully!")
+        print(f"Category ID: {category.id}")
+
+    else:
+
+        print("This category already exists.")
+
 
 def delete_category_menu():
 
@@ -565,19 +594,19 @@ def edit_user_menu():
 
     print("\nEnter new information:")
 
-    username = input(
+    username = InputHelper.get_username(
         "New username: "
     )
 
-    name = input(
+    name = InputHelper.get_required_input(
         "New name: "
     )
 
-    phone = input(
+    phone = InputHelper.get_phone(
         "New phone: "
     )
 
-    address = input(
+    address = InputHelper.get_required_input(
         "New address: "
     )
 
@@ -618,7 +647,8 @@ def edit_user_menu():
     else:
 
         print(
-            "\nFailed to update user."
+            "\nFailed to update user (duplicate username, "
+            "or the last admin cannot be demoted)."
         )
 
 
