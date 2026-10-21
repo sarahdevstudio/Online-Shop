@@ -1,5 +1,7 @@
 from models.product import Product
 from utils.file_manager import FileManager
+from services.inventory_service import InventoryService
+from services.review_service import ReviewService
 
 
 class ProductService:
@@ -69,6 +71,15 @@ class ProductService:
             line
         )
 
+        if stock > 0:
+
+            InventoryService.add_record(
+                product_id=product.id,
+                change=stock,
+                operation="STOCK_IN",
+                note="Initial stock"
+            )
+
         return product
 
     @staticmethod
@@ -76,10 +87,12 @@ class ProductService:
         products = ProductService.get_products()
 
         found = False
+        stock_change = 0
 
         for product in products:
 
             if product.id == product_id:
+                stock_change = stock - product.stock
                 product.name = name
                 product.category = category
                 product.price = price
@@ -108,6 +121,15 @@ class ProductService:
             ProductService.PRODUCTS_FILE,
             data
         )
+
+        if stock_change != 0:
+
+            InventoryService.add_record(
+                product_id=product_id,
+                change=stock_change,
+                operation="ADJUST",
+                note="Manual stock edit"
+            )
 
         return True
 
@@ -140,6 +162,42 @@ class ProductService:
             ProductService.PRODUCTS_FILE,
             data
         )
+
+    @staticmethod
+    def increase_stock(product_id, quantity):
+        products = ProductService.get_products()
+
+        found = False
+
+        for product in products:
+
+            if product.id == product_id:
+                product.stock += quantity
+                found = True
+                break
+
+        if not found:
+            return False
+
+        data = []
+
+        for product in products:
+            line = (
+                f"{product.id}|"
+                f"{product.name}|"
+                f"{product.category}|"
+                f"{product.price}|"
+                f"{product.stock}\n"
+            )
+
+            data.append(line)
+
+        FileManager.update_file(
+            ProductService.PRODUCTS_FILE,
+            data
+        )
+
+        return True
 
     @staticmethod
     def delete_product(product_id):
@@ -177,6 +235,12 @@ class ProductService:
             ProductService.PRODUCTS_FILE,
             data
         )
+
+        # remove the deleted product from every cart
+        from services.cart_service import CartService
+
+        CartService.remove_product_from_all_carts(product_id)
+        ReviewService.delete_product_reviews(product_id)
 
         return True
 
@@ -223,11 +287,21 @@ class ProductService:
 
         for product in products:
 
+            average, count = ReviewService.get_rating_summary(
+                product.id
+            )
+
+            if average is None:
+                rating_text = "No ratings yet"
+            else:
+                rating_text = f"{average:.1f}/5 ({count} reviews)"
+
             print(f"""
 ID       : {product.id}
 Name     : {product.name}
 Category : {product.category}
 Price    : {product.price}
 Stock    : {product.stock}
+Rating   : {rating_text}
 --------------------------------------------
 """)
