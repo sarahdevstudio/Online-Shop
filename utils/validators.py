@@ -1,3 +1,6 @@
+import math
+
+
 class Validator:
 
     @staticmethod
@@ -5,12 +8,17 @@ class Validator:
         return not value or not value.strip()
 
     @staticmethod
+    def has_separator(value):
+        # "|" is the field separator of the data files
+        return "|" in value
+
+    @staticmethod
     def is_positive_number(value):
 
         try:
             number = float(value)
 
-            return number > 0
+            return math.isfinite(number) and number > 0
 
         except ValueError:
             return False
@@ -21,7 +29,7 @@ class Validator:
         try:
             number = float(value)
 
-            return number >= 0
+            return math.isfinite(number) and number >= 0
 
         except ValueError:
             return False
@@ -82,7 +90,7 @@ class Validator:
         if len(username) < 3:
             return False
 
-        if " " in username:
+        if " " in username or "|" in username:
             return False
 
         return True
